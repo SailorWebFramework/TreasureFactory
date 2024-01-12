@@ -44,17 +44,14 @@ def fetch_treasure() -> dict:
     return treasure
     
 def read_treasure() -> dict:
-    '''Reads the treasure dictionary from memory, or fetches it if it is empty'''
+    '''Reads the treasure dictionary from memory, returns {} if not found'''
     try:
         with open('treasure.json', 'r') as file:
             treasure = json.load(file)
             return treasure
 
     except FileNotFoundError:
-        print("Treasure file not found, creating new one")
-        treasure = fetch_treasure()
-        write_treasure(treasure)
-        return treasure
+       return {}
 
 def write_treasure(treasure: dict):
     '''Writes the treasure dictionary to memory'''
@@ -63,12 +60,13 @@ def write_treasure(treasure: dict):
 
 def main():
     treasure = read_treasure()
-    print(treasure)
 
-        
-def debug_element(elem):
-    '''Print the HTML content of an element'''
-    print("Element HTML:", elem.get_attribute('outerHTML'))
+    if not treasure:
+        print("Treasure not found, fetching...")
+        treasure = fetch_treasure()
+        write_treasure(treasure)
+
+    print(treasure)
 
 if __name__ == '__main__':
     main()
