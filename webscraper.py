@@ -8,8 +8,6 @@ import json
 
 mozilla_html_elements_reference = "https://developer.mozilla.org/en-US/docs/Web/HTML/Element"
 
-# html_to_string = {
-
 def fetch_treasure() -> dict:
     '''Fetches all html elements and descriptions from 
     each table elem on mozilla's html docs page'''
