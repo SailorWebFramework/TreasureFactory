@@ -7,6 +7,10 @@ import requests
 import json
 
 mozilla_html_elements_reference = "https://developer.mozilla.org/en-US/docs/Web/HTML/Element"
+mozilla_global_attributes_reference = "https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes"
+
+global_attributes = "treasure_attributes.json"
+global_html = "treasure_html.json"
 
 def fetch_treasure() -> dict:
     '''Fetches all html elements and descriptions from 
@@ -41,7 +45,7 @@ def fetch_treasure() -> dict:
 
     return treasure
     
-def read_treasure() -> dict:
+def read_treasure(name: str) -> dict:
     '''Reads the treasure dictionary from memory, returns {} if not found'''
     try:
         with open('treasure.json', 'r') as file:
@@ -51,9 +55,9 @@ def read_treasure() -> dict:
     except FileNotFoundError:
        return {}
 
-def write_treasure(treasure: dict):
+def write_treasure(treasure: dict, name: str = 'treasure.json'):
     '''Writes the treasure dictionary to memory'''
-    with open('treasure.json', 'w') as file:
+    with open('name', 'w') as file:
         json.dump(treasure, file)
 
 def main():
@@ -62,7 +66,7 @@ def main():
     if not treasure:
         print("Treasure not found, fetching...")
         treasure = fetch_treasure()
-        write_treasure(treasure)
+        write_treasure(treasure, "treasure_html.json")
 
     print(treasure)
 
