@@ -8,7 +8,7 @@ import json
 import time
 
 TREASURE = "tailwind.json"
-TOTAL_CLASSES = 1583 # as of 02-10-2024
+TOTAL_CLASSES = 1874 # as of 02-11-2024
 
 class TailwindScraper:
 
