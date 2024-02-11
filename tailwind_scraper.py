@@ -8,8 +8,6 @@ import requests
 import json
 import time
 
-
-
 TREASURE = "tailwind.json"
 TOTAL_CLASSES = 1583 # as of 02-10-2024
 
@@ -34,22 +32,22 @@ class TailwindScraper:
             for l in links:
 
                 class_name = l.text
-                if class_name in self.treasure: 
+                if class_name in self.treasure and self.treasure[class_name] != "error fetching description": 
                     print(f"Skipping {class_name}")
                     continue # skip if already fetched
                 self.treasure[class_name] = "error fetching description" # placeholder
 
                 l.click()
+                time.sleep(1) # wait for the page to load
                 try:
                     # Wait for the specific element to be present
                     desc = self.driver.find_element(By.CSS_SELECTOR, "code.language-css")
                     self.treasure[class_name] = desc.text
                 except NoSuchElementException:
-                    self.treasure[class_name] = "error fetching description"
+                    print(f"Error fetching {class_name}")
                     pass
 
                 self.write_treasure(self.treasure)
-
                 self.driver.back()
     
     def quit(self):
@@ -60,7 +58,7 @@ class TailwindScraper:
         with open(name, 'w') as file:
             json.dump(treasure, file)
     
-    def read_treasure(self, name: str = TREASURE) -> dict:
+    def read_treasure(self, name: str = TREASURE):
         '''Reads the treasure dictionary from memory'''
         try:
             with open(name, 'r') as file:
