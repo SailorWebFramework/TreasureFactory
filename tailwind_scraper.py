@@ -4,7 +4,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup
-import requests
 import json
 import time
 
@@ -15,11 +14,12 @@ class TailwindScraper:
 
     def __init__(self):
         self.tailwind_class_list = "https://tailwind.build/classes"
+        self.tailwind_translations = "https://tailwind-to-css.vercel.app/"
         self.driver = webdriver.Chrome()
         self.wait = WebDriverWait(self.driver, 10)
         self.treasure = {}
 
-    def fetch_treasure(self) -> dict:
+    def fetch_treasure(self):
         '''Fetches all tailwind css classes and descriptions'''
         self.driver.get(self.tailwind_class_list)
         categories = self.driver.find_elements(By.CSS_SELECTOR, "div.w-full.mb-6")
@@ -49,6 +49,24 @@ class TailwindScraper:
 
                 self.write_treasure(self.treasure)
                 self.driver.back()
+
+    def translate_treasure(self):
+        '''Translates the tailwind classes to css (if fetch failed)'''
+        self.driver.get(self.tailwind_translations)
+        time.sleep(3)
+        text_inputs = self.driver.find_elements(By.TAG_NAME, "textarea")
+        input_elem = text_inputs[0]
+        output_elem = text_inputs[1]
+
+        for k, v in self.treasure.items():
+            if v == "error fetching description" or "{ }" in v:
+                input_elem.clear()
+                input_elem.send_keys(k.replace(".", ""))
+                time.sleep(1)
+                output = output_elem.text
+                print(f"Translated {k} to {output}")
+                self.treasure[k] = k + " { " + output + " }"
+                self.write_treasure(self.treasure)
     
     def quit(self):
         self.driver.quit()
@@ -71,7 +89,8 @@ class TailwindScraper:
         print("Fetching treasure")
         self.read_treasure()
         print("total classes:", len(self.treasure))
-        treasure = self.fetch_treasure()
+        # treasure = self.fetch_treasure()
+        treasure = self.translate_treasure()
         # self.write_treasure(treasure, "treasure_tailwind.json")
         print("Finished fetching treasure")
         self.quit()
